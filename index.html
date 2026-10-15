@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F5C4D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Usrah Manager</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root{--green:#0F5C4D;--ink:#15231F;--muted:#5B6B66;--line:#D9DFDA;--bg:#F3F5F2;--card:#FFFFFF;--tint:#E3EFEA;--gold:#F2C46D;--warn:#7A2E10}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;min-height:100dvh;display:flex;justify-content:center}
+#shell{width:100%;max-width:480px;min-height:100dvh;display:flex;flex-direction:column;position:relative}
+#app{flex:1;padding:max(24px,env(safe-area-inset-top)) 20px 24px;display:flex;flex-direction:column;gap:16px}
+h1,h2{margin:0;font-weight:700;letter-spacing:-.01em}
+h1{font-size:26px}h2{font-size:17px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.col{display:flex;flex-direction:column}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.hero{background:var(--green);color:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.hero .muted{color:#CDE6DE}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:12px;background:var(--gold);color:#3B2A08}
+.pill{font-size:12px;font-weight:600;padding:6px 12px;border-radius:12px;background:var(--tint);color:#0B3F35}
+.btn{min-height:48px;padding:0 20px;border-radius:24px;border:0;background:var(--green);color:#fff;font-weight:600;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.btn.ghost{background:transparent;border:1px solid var(--green);color:var(--green)}
+.btn.light{background:#fff;color:#0B3F35}
+.btn.danger{background:transparent;border:1px solid #C9A99A;color:var(--warn)}
+.btn.small{min-height:44px;padding:0 14px;font-size:14px}
+.icon-btn{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.icon-btn.primary{background:var(--green);border-color:var(--green)}
+.avatar{width:40px;height:40px;border-radius:20px;background:var(--tint);color:#0B3F35;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none;font-size:14px}
+.avatar.off{background:#EEF0EE;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat b{display:block;font-size:24px;font-weight:700}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;min-height:56px;width:100%;text-align:left}
+.item .grow{flex:1;min-width:0}
+.item .t{font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.datebox{width:56px;flex:none;border-radius:14px;background:var(--tint);color:#0B3F35;display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.datebox.now{background:var(--green);color:#fff}
+.datebox small{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.datebox span{font-size:24px;font-weight:700;line-height:1.1}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#E4E9E5;border-radius:22px;padding:4px}
+.seg button{min-height:44px;border:0;border-radius:18px;background:transparent;color:var(--muted);font-weight:500}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:600}
+label{font-size:13px;font-weight:600;color:#3F4F4A;display:block;margin-bottom:6px}
+input[type=text],input[type=date],input[type=time],input[type=tel],select{width:100%;min-height:48px;border-radius:14px;border:1px solid #C9D1CC;background:#fff;padding:0 14px}
+.field{display:flex;flex-direction:column}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar{height:8px;border-radius:4px;background:#E4E9E5;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green)}
+.empty{text-align:center;padding:28px 16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+nav{position:sticky;bottom:0;height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr)}
+nav button{border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+nav button[aria-current="page"]{color:var(--green);font-weight:600}
+.footer{position:sticky;bottom:0;background:var(--bg);padding:12px 0 calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);margin-top:auto;display:flex;gap:10px}
+.footer .btn{flex:1}
+:focus-visible{outline:3px solid #1B7F6B;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="shell">
+<main id="app"></main>
+<nav id="nav" aria-label="Main"></nav>
+</div>
+<script>
+(function () {
+'use strict';
+var KEY = 'usrah-manager-v1';
+var S = load();
+var view = { name: 'home' };
+var tab = 'upcoming';
+var draft = {};
+
+function load() {
+try { var d = JSON.parse(localStorage.getItem(KEY)); if (d && d.members && d.sessions) return d; } catch (e) {}
+return { members: [], sessions: [] };
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function dt(date) { return new Date(date + 'T00:00:00'); }
+function fmtDate(date) { return dt(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
+function fmtTime(t) { if (!t) return ''; var p = t.split(':'), h = +p[0], m = p[1]; return ((h % 12) || 12) + ':' + m + ' ' + (h >= 12 ? 'PM' : 'AM'); }
+function initials(n) { return n.trim().split(/\s+/).map(function (w) { return w[0]; }).join('').slice(0, 2).toUpperCase(); }
+function byId(list, id) { return list.filter(function (x) { return x.id === id; })[0]; }
+
+var ic = {
+home: '<path d="M4 11l8-7 8 7v9H4z"/>',
+cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3-5.5 6.5-5.5s5.9 1.9 6.500 5.500M16 5a3.500 3.500 0 0 1 0 6.500M18 14.800c1.800.7 2.900 2.400 3.500 5.200"/>',
+plus: '<path d="M12 5v14M5 12h14"/>',
+back: '<path d="M15 5l-7 7 7 7"/>',
+check: '<path d="M5 12.500l4.500 4.500L19 7.500"/>'
+};
+function svg(name, size, color) { return '<svg aria-hidden="true" width="' + (size || 24) + '" height="' + (size || 24) + '" viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ic[name] + '</svg>'; }
+
+function takenSessions() { return S.sessions.filter(function (s) { return s.taken; }).sort(function (a, b) { return b.date.localeCompare(a.date); }); }
+function upcoming() { var t = today(); return S.sessions.filter(function (s) { return !s.taken && s.date >= t; }).sort(function (a, b) { return (a.date + a.time).localeCompare(b.date + b.time); }); }
+function past() { var t = today(); return S.sessions.filter(function (s) { return s.taken || s.date < t; }).sort(function (a, b) { return b.date.localeCompare(a.date); }); }
+function presentCount(s) { return Object.keys(s.attendance || {}).filter(function (k) { return s.attendance[k] && byId(S.members, k); }).length; }
+function memberRate(m) {
+var t = takenSessions().filter(function (s) { return s.attendance && (m.id in s.attendance); });
+if (!t.length) return null;
+return Math.round(100 * t.filter(function (s) { return s.attendance[m.id]; }).length / t.length);
+}
+function followUps() {
+var last = takenSessions().slice(0, 2);
+if (last.length < 2) return [];
+return S.members.filter(function (m) { return last.every(function (s) { return (m.id in s.attendance) && !s.attendance[m.id]; }); });
+}
+function waLink(m) { var d = (m.phone || '').replace(/\D/g, ''); return d ? 'https://wa.me/' + d : ''; }
+
+/* ---------- views ---------- */
+function vHome() {
+var next = upcoming()[0], h = '';
+h += '<div class="col"><span class="muted" style="font-size:14px">Assalamualaikum</span><h1>Usrah Manager</h1></div>';
+if (next) {
+h += '<div class="hero"><div class="row between"><span class="muted" style="font-weight:600;letter-spacing:1.2px;font-size:12px">NEXT USRAH</span>' + (next.date === today() ? '<span class="badge">Today</span>' : '') + '</div>' +
+'<div class="col" style="gap:4px"><span style="font-size:22px;font-weight:700">' + esc(next.topic) + '</span><span style="font-size:14px;color:#E3F1EC">' + fmtDate(next.date) + (next.time ? ' · ' + fmtTime(next.time) : '') + (next.venue ? ' · ' + esc(next.venue) : '') + '</span></div>' +
+'<div><button class="btn light" data-a="att" data-id="' + next.id + '">Take attendance</button></div></div>';
+} else {
+h += '<div class="card empty"><b>No upcoming usrah</b><span class="muted">Schedule your next session to see it here.</span><button class="btn" data-a="new-session">New session</button></div>';
+}
+var t = takenSessions(), month = today().slice(0, 7);
+var inMonth = S.sessions.filter(function (s) { return s.date.slice(0, 7) === month; }).length;
+var avg = t.length && S.members.length ? Math.round(100 * t.reduce(function (a, s) { return a + presentCount(s); }, 0) / (t.length * S.members.length)) + '%' : '–';
+h += '<div class="stats"><div class="card stat"><b>' + inMonth + '</b><span class="muted">This month</span></div><div class="card stat"><b>' + avg + '</b><span class="muted">Avg attendance</span></div><div class="card stat"><b>' + S.members.length + '</b><span class="muted">Members</span></div></div>';
+var f = followUps();
+if (f.length) {
+h += '<h2>Needs follow-up</h2><div class="list">' + f.map(function (m) {
+var l = waLink(m);
+return '<div class="card item"><span class="avatar off">' + esc(initials(m.name)) + '</span><div class="grow col"><span class="t">' + esc(m.name) + '</span><span class="muted">Absent last 2 sessions</span></div>' + (l ? '<a class="btn ghost small" href="' + l + '" target="_blank" rel="noopener">Message</a>' : '') + '</div>';
+}).join('') + '</div>';
+}
+if (!S.members.length && !S.sessions.length) {
+h += '<div class="card empty"><b>Start here</b><span class="muted">Add your members, then schedule a session. Or look around with sample data.</span><div class="row"><button class="btn ghost small" data-a="sample">Load sample data</button></div></div>';
+}
+return h;
+}
+
+function vSessions() {
+var list = tab === 'upcoming' ? upcoming() : past();
+var h = '<div class="row between"><h1>Sessions</h1><button class="icon-btn primary" data-a="new-session" aria-label="New session">' + svg('plus', 22, '#fff') + '</button></div>';
+h += '<div class="seg" role="group" aria-label="Filter"><button data-a="tab" data-id="upcoming" aria-pressed="' + (tab === 'upcoming') + '">Upcoming</button><button data-a="tab" data-id="past" aria-pressed="' + (tab === 'past') + '">Past</button></div>';
+if (!list.length) return h + '<div class="card empty"><b>' + (tab === 'upcoming' ? 'Nothing scheduled' : 'No past sessions yet') + '</b>' + (tab === 'upcoming' ? '<button class="btn" data-a="new-session">New session</button>' : '') + '</div>';
+h += '<div class="list">' + list.map(function (s) {
+var d = dt(s.date), now = s.date === today();
+var meta = [s.time ? fmtTime(s.time) : '', s.venue].filter(Boolean).map(esc).join(' · ');
+var tail = s.taken ? '<span class="pill">' + presentCount(s) + '/' + S.members.length + '</span>' : (now ? '<span class="badge">Today</span>' : '');
+return '<button class="card item" data-a="att" data-id="' + s.id + '"><span class="datebox' + (now ? ' now' : '') + '"><small>' + d.toLocaleDateString('en-GB', { month: 'short' }) + '</small><span>' + d.getDate() + '</span></span><span class="grow col"><span class="t">' + esc(s.topic) + '</span><span class="muted">' + (meta || 'Details to be added') + '</span>' + (s.lead ? '<span class="muted">Led by ' + esc(s.lead) + '</span>' : '') + '</span>' + tail + '</button>';
+}).join('') + '</div>';
+return h;
+}
+
+function vMembers() {
+var h = '<div class="row between"><div class="col"><h1>Members</h1><span class="muted">' + S.members.length + ' in your usrah</span></div><button class="icon-btn primary" data-a="new-member" aria-label="Add member">' + svg('plus', 22, '#fff') + '</button></div>';
+if (!S.members.length) return h + '<div class="card empty"><b>No members yet</b><button class="btn" data-a="new-member">Add member</button></div>';
+h += '<div class="list">' + S.members.map(function (m) {
+var r = memberRate(m);
+return '<button class="card item" data-a="edit-member" data-id="' + m.id + '"><span class="avatar">' + esc(initials(m.name)) + '</span><span class="grow col"><span class="t">' + esc(m.name) + '</span><span class="muted">' + esc(m.role) + '</span></span><span class="pill">' + (r == null ? 'New' : r + '%') + '</span></button>';
+}).join('') + '</div>';
+return h;
+}
+
+function vMemberForm() {
+var m = view.id ? byId(S.members, view.id) : null;
+var h = '<div class="row"><button class="icon-btn" data-a="back" aria-label="Back">' + svg('back', 22) + '</button><h1 style="font-size:22px">' + (m ? 'Edit member' : 'Add member') + '</h1></div>';
+h += '<form id="mform" class="col" style="gap:16px;flex:1" autocomplete="off">' +
+'<div class="field"><label for="mn">Full name</label><input id="mn" name="name" type="text" required value="' + esc(m ? m.name : '') + '"></div>' +
+'<div class="field"><label for="mr">Role</label><select id="mr" name="role">' + ['Member', 'Assistant', 'Naqib'].map(function (r) { return '<option' + (m && m.role === r ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select></div>' +
+'<div class="field"><label for="mp">Phone (optional, for WhatsApp)</label><input id="mp" name="phone" type="tel" inputmode="tel" placeholder="e.g. 60123456789" value="' + esc(m ? m.phone : '') + '"></div>' +
+'<div class="footer">' + (m ? '<button type="button" class="btn danger" data-a="del-member" data-id="' + m.id + '">Remove</button>' : '') + '<button class="btn" type="submit">Save</button></div></form>';
+return h;
+}
+
+function vSessionForm() {
+var h = '<div class="row"><button class="icon-btn" data-a="back" aria-label="Back">' + svg('back', 22) + '</button><h1 style="font-size:22px">New session</h1></div>';
+h += '<form id="sform" class="col" style="gap:16px;flex:1" autocomplete="off">' +
+'<div class="field"><label for="st">Topic</label><input id="st" name="topic" type="text" required placeholder="e.g. Tafsir, adab, fiqh of worship"></div>' +
+'<div class="two"><div class="field"><label for="sd">Date</label><input id="sd" name="date" type="date" required value="' + today() + '"></div><div class="field"><label for="sm">Time</label><input id="sm" name="time" type="time" value="20:30"></div></div>' +
+'<div class="field"><label for="sv">Venue</label><input id="sv" name="venue" type="text"></div>' +
+'<div class="field"><label for="sl">Led by</label><input id="sl" name="lead" type="text" list="people"><datalist id="people">' + S.members.map(function (m) { return '<option value="' + esc(m.name) + '">'; }).join('') + '</datalist></div>' +
+'<div class="footer"><button type="button" class="btn ghost" data-a="back">Cancel</button><button class="btn" type="submit">Save session</button></div></form>';
+return h;
+}
+
+function vAttendance() {
+var s = byId(S.sessions, view.id);
+if (!s) return '<p>Session not found.</p>';
+var att = draft.att, n = S.members.length, c = S.members.filter(function (m) { return att[m.id]; }).length;
+var h = '<div class="row"><button class="icon-btn" data-a="back" aria-label="Back">' + svg('back', 22) + '</button><div class="col"><h1 style="font-size:20px">Attendance</h1><span class="muted">' + esc(s.topic) + ' · ' + fmtDate(s.date) + '</span></div></div>';
+if (!n) return h + '<div class="card empty"><b>Add members first</b><button class="btn" data-a="new-member">Add member</button></div>';
+h += '<div class="card col" style="gap:10px"><div class="row between"><b style="font-size:22px">' + c + ' of ' + n + ' present</b><span class="muted">Tap a name to mark</span></div><div class="bar"><i style="width:' + Math.round(100 * c / n) + '%"></i></div></div>';
+h += '<div class="list">' + S.members.map(function (m) {
+var on = !!att[m.id];
+return '<button class="card item" data-a="toggle" data-id="' + m.id + '" aria-pressed="' + on + '" style="min-height:52px;padding:8px 14px 8px 10px"><span class="avatar' + (on ? '' : ' off') + '" style="width:36px;height:36px">' + esc(initials(m.name)) + '</span><span class="grow t" style="font-weight:500">' + esc(m.name) + '</span><span class="pill" style="' + (on ? 'background:#0F5C4D;color:#fff' : 'background:#F6E0D6;color:#7A2E10') + '">' + (on ? 'Present' : 'Absent') + '</span></button>';
+}).join('') + '</div>';
+h += '<div class="footer"><button class="btn danger" data-a="del-session" data-id="' + s.id + '">Delete</button><button class="btn" data-a="save-att">Save attendance</button></div>';
+return h;
+}
+
+function render() {
+var app = document.getElementById('app'), nav = document.getElementById('nav');
+var full = { 'member-form': 1, 'session-form': 1, att: 1 }[view.name];
+var html = { home: vHome, sessions: vSessions, members: vMembers, 'member-form': vMemberForm, 'session-form': vSessionForm, att: vAttendance }[view.name]();
+app.innerHTML = html;
+nav.style.display = full ? 'none' : '';
+nav.innerHTML = [['home', 'Home'], ['sessions', 'Sessions'], ['members', 'Members']].map(function (t) {
+return '<button data-a="go" data-id="' + t[0] + '"' + (view.name === t[0] ? ' aria-current="page"' : '') + '>' + svg({ home: 'home', sessions: 'cal', members: 'users' }[t[0]]) + t[1] + '</button>';
+}).join('');
+window.scrollTo(0, 0);
+}
+function go(name, extra) { view = Object.assign({ name: name }, extra || {}); render(); }
+
+/* ---------- events ---------- */
+document.addEventListener('click', function (e) {
+var el = e.target.closest('[data-a]');
+if (!el) return;
+var a = el.dataset.a, id = el.dataset.id;
+if (a === 'go') go(id);
+else if (a === 'back') go(view.from || 'home');
+else if (a === 'tab') { tab = id; render(); }
+else if (a === 'new-session') go('session-form', { from: view.name });
+else if (a === 'new-member') go('member-form', { from: view.name === 'att' ? 'members' : view.name });
+else if (a === 'edit-member') go('member-form', { id: id, from: 'members' });
+else if (a === 'att') {
+var s = byId(S.sessions, id), att = {};
+S.members.forEach(function (m) { att[m.id] = s.taken ? !!(s.attendance && s.attendance[m.id]) : true; });
+draft = { att: att };
+go('att', { id: id, from: view.name });
+} else if (a === 'toggle') { draft.att[id] = !draft.att[id]; var y = window.scrollY; render(); window.scrollTo(0, y); }
+else if (a === 'save-att') {
+var ss = byId(S.sessions, view.id); ss.attendance = Object.assign({}, draft.att); ss.taken = true; save(); go(view.from || 'home');
+} else if (a === 'del-session') {
+if (confirm('Delete this session and its attendance?')) { S.sessions = S.sessions.filter(function (x) { return x.id !== id; }); save(); go('sessions'); }
+} else if (a === 'del-member') {
+if (confirm('Remove this member? Their past attendance is kept in totals only for remaining members.')) { S.members = S.members.filter(function (x) { return x.id !== id; }); save(); go('members'); }
+} else if (a === 'sample') loadSample();
+});
+
+document.addEventListener('submit', function (e) {
+e.preventDefault();
+var f = e.target, v = function (n) { return (f.elements[n].value || '').trim(); };
+if (f.id === 'mform') {
+if (!v('name')) return;
+var m = view.id ? byId(S.members, view.id) : null;
+if (m) { m.name = v('name'); m.role = v('role'); m.phone = v('phone'); }
+else S.members.push({ id: uid(), name: v('name'), role: v('role'), phone: v('phone') });
+save(); go(view.from || 'members');
+} else if (f.id === 'sform') {
+if (!v('topic') || !v('date')) return;
+S.sessions.push({ id: uid(), topic: v('topic'), date: v('date'), time: v('time'), venue: v('venue'), lead: v('lead'), taken: false, attendance: {} });
+save(); go('sessions');
+}
+});
+
+function loadSample() {
+var names = [['Hafiz Rahman', 'Naqib'], ['Aiman Zikri', 'Assistant'], ['Imran Yusuf', 'Member'], ['Khairul Anwar', 'Member'], ['Adam Hakimi', 'Member'], ['Luqman Hakim', 'Member']];
+S.members = names.map(function (n) { return { id: uid(), name: n[0], role: n[1], phone: '' }; });
+var d = function (off) { var x = new Date(); x.setDate(x.getDate() + off); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+var mk = function (off, topic, taken, absentIdx) {
+var att = {}; S.members.forEach(function (m, i) { att[m.id] = absentIdx.indexOf(i) < 0; });
+return { id: uid(), topic: topic, date: d(off), time: '20:30', venue: 'Surau', lead: 'Hafiz Rahman', taken: taken, attendance: taken ? att : {} };
+};
+S.sessions = [mk(-14, 'Ikhlas in daily deeds', true, [4]), mk(-7, 'Adab with fellow Muslims', true, [4, 3]), mk(0, 'Tafsir Surah Al-Hujurat', false, []), mk(7, 'Topic to be decided', false, [])];
+save(); go('home');
+}
+
+render();
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+})();
+</script>
+</body>
+</html>
